@@ -108,7 +108,7 @@ class BestMixer
        
     /**
      * @param $data
-     * @return mixed
+     * @return json order/create
      * @throws Exception
      */
     public function createOrder($data)
@@ -116,9 +116,9 @@ class BestMixer
         $sp = 0;
 
         foreach ($data['output'] as $r) {
-            $sp+= $r['percent'];
+            $sp += $r['percent'];
 
-            if ($r['delay'] > 2880) {
+            if ($r['delay'] > 4320) {
                 throw new Exception('Invalid delay for ' . $r['address']);
             }
         }
@@ -132,8 +132,7 @@ class BestMixer
 
     /**
      * @param $id
-     * @return string|stdClass
-     * @throws Exception
+     * @return json order/info
      */
     public function getOrder($id)
     {
@@ -146,7 +145,7 @@ class BestMixer
 
     /**
      * @param $id
-     * @return mixed
+     * @return json code/info
      */
     public function getCodeInfo($id)
     {
@@ -157,6 +156,16 @@ class BestMixer
         return $this->request('/code/info', $data, true);
     }
 
+    /**
+     * @return json fee/info
+     */
+    public function getFeeInfo()
+    {
+        $data = [];
+
+        return $this->request('/fee/info', $data, true);
+    }
+
 }
 
 /**
@@ -165,16 +174,24 @@ class BestMixer
 
 $useTor = false;
 $proxy = null;
-$apiToken = 'XXXXXXXXXX';
-$bm_code = 'XXXXXXXXXX';
-$coin = 'btc';
-$fee = 0.5123;
+$apiToken = 'XXXXXXXXXX'; // API key
+$bm_code = 'XXXXXXXXXX'; // BestMixer code
+$coin = 'btc'; // btc, bch, ltc, eth
+$fee = '1.2345'; // 0.5000 - 5.0000
 
 $mixer = new BestMixer($apiToken, $useTor, $proxy);
 
 // code/info
+/*
 $resp = $mixer->getCodeInfo($bm_code);
 print_r($resp); exit;
+*/
+
+// fee/info
+/*
+$resp = $mixer->getFeeInfo();
+print_r($resp); exit;
+*/
 
 // order/create
 /*
@@ -186,7 +203,7 @@ $resp = $mixer->createOrder([
         [
             'address' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
             'percent' => 9.5,
-            'delay' => 30
+            'delay' => 4320
         ],
         [
             'address' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -196,7 +213,7 @@ $resp = $mixer->createOrder([
         [
             'address' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
             'percent' => 60,
-            'delay' => 2
+            'delay' => 120
         ]
     ],
 ]);
